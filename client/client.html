@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Our simple HTTP server</title>
+  <link rel="stylesheet" type="text/css" href="/style.css">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
+  <script type="text/babel">
+    const handleResponse = (xhr, parseResponse) => {
+      const content = document.querySelector('#content');
+
+      switch(xhr.status) {
+        case 200: //if success
+          content.innerHTML = `<b>Success</b>`;
+          break;
+        case 201: //if created
+          content.innerHTML = '<b>Create</b>';
+          break;
+        case 400: //if bad request
+          content.innerHTML = `<b>Bad Request</b>`;
+          break;
+        case 404: //if not found
+          content.innerHTML = `<b>Resource Not Found</b>`;
+          break;
+        default: //any other status
+          content.innerHTML = `Error code not implemented by client.`;
+          break;
+      }
+      
+      //if we are expecting a response body (not in a head request)
+      if(parseResponse) {
+        //parse the object and print it
+        const obj = JSON.parse(xhr.response);
+        console.dir(obj);
+      } else {
+        console.log('received');
+      }
+    };
+
+    //function to send request
+    const requestUpdate = (e, userForm) => {
+      const url = userForm.querySelector("#page").value;
+      const method ='get';
+      
+      //create a new AJAX request (asynchronous)
+      const xhr = new XMLHttpRequest();
+      xhr.open(method, url);
+      xhr.setRequestHeader('Accept', 'application/json');
+
+      //if get request or head request
+      if(method == 'get') {
+        xhr.onload = () => handleResponse(xhr, true);
+      } else {
+        xhr.onload = () => handleResponse(xhr, false);
+      }
+      
+      //send ajax request
+      xhr.send();
+      
+      //cancel browser's default action
+      e.preventDefault();
+      //return false to prevent page redirection from a form
+      return false;
+    };
+
+    const init = () => {
+      const userForm = document.querySelector('#userForm');
+
+      const getUsers = (e) => requestUpdate(e, userForm);
+      
+      userForm.addEventListener('submit', getUsers);
+    };
+
+    window.onload = init;
+
+  </script>
+</head>
+<body>
+  <section id="top">
+    <h3>Status Code Tests</h3>
+      <form id="userForm" method="get">
+        <select id="page">
+          <option value="/success">Success</option>
+          <option value="/badRequest">Bad Request</option>
+          <option value="/unauthorized">Unauthorized</option>
+          <option value="/forbidden">Forbidden</option>
+          <option value="/internal">Internal</option>
+          <option value="/notImplemented">Not Implemented</option>
+          <option value="/notFound">Not Found</option>
+        </select>
+        <select id="type">
+          <option value="application/json">JSON</option>
+          <option value="text/xml">XML</option>
+        </select>
+        <button id="send" type="submit">Send</button>
+      </form>
+    
+  </section>
+  <section id="content">
+  </section>
+</body>
+</html>
