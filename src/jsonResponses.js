@@ -97,12 +97,68 @@ const success = (request, response) => {
 
 // function for 400 missing query param ?valid=true
 const badRequest = (request, response) => {
+  // console.dir(request);
+  console.log(request.url.split('?'));
+  if (request.url === '/badRequest?valid=true') {
+    const responseJSON = {
+      id: 'bad request',
+      message: 'This message has the required parameters: 200',
+    };
+    return respondJSON(request, response, 200, responseJSON);
+  }
   const responseJSON = {
     id: 'bad request',
-    message: 'bad request 400',
+    message: 'Missing valid query param: 400',
+  };
+    // return 400 with error message
+  return respondJSON(request, response, 400, responseJSON);
+};
+
+// function for 401 missing query param ?valid=true
+const unauthorized = (request, response) => {
+  if (request.url === '/unauthorized?loggedIn=yes') {
+    const responseJSON = {
+      id: 'unauthorized',
+      message: 'You have successfully viewed the content',
+    };
+    return respondJSON(request, response, 200, responseJSON);
+  }
+  const responseJSON = {
+    id: 'unauthorized',
+    message: 'Missing loggedIn param set to yes: 401',
+  };
+    // return 401 with error message
+  return respondJSON(request, response, 401, responseJSON);
+};
+
+// function for 403 missing query param ?valid=true
+const forbidden = (request, response) => {
+  const responseJSON = {
+    id: 'forbidden',
+    message: 'You do not have acccess to this content: 403',
   };
   // return 400 with error message
-  return respondJSON(request, response, 400, responseJSON);
+  return respondJSON(request, response, 403, responseJSON);
+};
+
+// function for 500 missing query param ?valid=true
+const internal = (request, response) => {
+  const responseJSON = {
+    id: 'internal',
+    message: 'internal server error: 500',
+  };
+  // return 400 with error message
+  return respondJSON(request, response, 500, responseJSON);
+};
+
+// function for 501 missing query param ?valid=true
+const notImplemented = (request, response) => {
+  const responseJSON = {
+    id: 'implemented',
+    message: 'a get request has not been implemented yet. Check again later: 501',
+  };
+  // return 400 with error message
+  return respondJSON(request, response, 501, responseJSON);
 };
 
 
@@ -115,4 +171,8 @@ module.exports = {
   notFoundMeta,
   success,
   badRequest,
+  unauthorized,
+  forbidden,
+  internal,
+  notImplemented,
 };

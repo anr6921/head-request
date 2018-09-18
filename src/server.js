@@ -24,6 +24,14 @@ const onRequest = (request, response) => {
         jsonHandler.success(request, response);
       } else if (parsedUrl.pathname === '/badRequest') {
         jsonHandler.badRequest(request, response);
+      } else if (parsedUrl.pathname === '/unauthorized') {
+        jsonHandler.unauthorized(request, response);
+      } else if (parsedUrl.pathname === '/forbidden') {
+        jsonHandler.forbidden(request, response);
+      } else if (parsedUrl.pathname === '/internal') {
+        jsonHandler.internal(request, response);
+      } else if (parsedUrl.pathname === '/notImplemented') {
+        jsonHandler.notImplemented(request, response);
       } else {
         // if not found, send 404 message
         jsonHandler.notFound(request, response);
